@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alfabeto e Números Mágicos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+    <style>
+        :root {
+            --gradiente-atual: linear-gradient(to bottom, #ff758c, #ff7eb3); /* Padrão inicial */
+            --cor-botao: rgba(255, 255, 255, 0.25);
+            --borda-botao: #ffffff;
+            --cor-texto: #ffffff;
+            --cor-sucesso: #4ffb4f;
+            --cor-erro: #ff4a4a;
+            --sombra: rgba(255, 255, 255, 0.5);
+        }
+        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+        body {
+            margin: 0; padding: 0; 
+            background: var(--gradiente-atual);
+            font-family: 'Nunito', sans-serif; color: white;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; height: 100vh; overflow: hidden;
+            transition: background 0.8s ease;
+        }
+        .tela { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 20px; text-align: center; animation: surgir 0.4s ease-out; }
+        .tela.ativa { display: flex; }
+        @keyframes surgir { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        
+        /* Estilo da Abertura */
+        .bebe-emoji { font-size: 80px; animation: flutuar 2.5s ease-in-out infinite; margin-bottom: 5px; }
+        .btn-entrar { padding: 18px 45px; font-size: 24px; background: #ffffff; color: #333333; border: none; border-radius: 30px; font-weight: 900; box-shadow: 0 10px 20px rgba(0,0,0,0.2); cursor: pointer; animation: pulso 1.8s infinite; margin-top: 15px; -webkit-tap-highlight-color: transparent; }
+        @keyframes pulso { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* Seleção de Cores Iniciais */
+        .seletor-cores { display: flex; gap: 15px; margin-bottom: 20px; background: rgba(255,255,255,0.15); padding: 10px 20px; border-radius: 50px; border: 2px solid rgba(255,255,255,0.3); }
+        .opcao-cor { width: 55px; height: 55px; border-radius: 50%; border: 4px solid white; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; -webkit-tap-highlight-color: transparent; }
+        .opcao-cor:active { transform: scale(0.85); }
+        .opcao-cor.selecionada { transform: scale(1.15); box-shadow: 0 0 15px #ffffff; }
+
+        h1 { font-size: 34px; margin-bottom: 5px; text-shadow: 2px 4px 10px rgba(0,0,0,0.3); font-weight: 900; }
+        p.instrucao { font-size: 18px; margin-bottom: 20px; text-shadow: 1px 2px 5px rgba(0,0,0,0.3); }
+        .menu-botoes { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
+        .btn-grande { padding: 16px; font-size: 20px; font-family: 'Nunito', sans-serif; font-weight: 900; border-radius: 22px; border: 4px solid white; background: rgba(255, 255, 255, 0.2); color: white; cursor: pointer; box-shadow: 0 6px 12px rgba(0,0,0,0.15); transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 12px; -webkit-tap-highlight-color: transparent; }
+        .btn-grande:active { transform: scale(0.93); }
+        
+        /* Controles superiores */
+        .controles-topo { position: absolute; top: 15px; left: 15px; display: flex; gap: 8px; z-index: 5; }
+        .btn-navegacao { padding: 8px 14px; font-size: 14px; font-family: 'Nunito', sans-serif; font-weight: 900; border-radius: 15px; background: rgba(0, 0, 0, 0.3); border: 2px solid white; color: white; cursor: pointer; }
+        .btn-inicio { background: rgba(255, 255, 255, 0.25); color: white; }
+
+        /* Grid de Conteúdo */
+        .grid-conteudo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; max-width: 360px; max-height: 55vh; overflow-y: auto; padding: 10px; margin: 0 auto; }
+        .bolha-item { aspect-ratio: 1; border-radius: 50%; background: var(--cor-botao); border: 3px solid var(--borda-botao); box-shadow: 0 0 8px var(--sombra); font-size: 24px; color: white; font-family: 'Nunito', sans-serif; font-weight: 900; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; -webkit-tap-highlight-color: transparent; }
+        .bolha-item:active { transform: scale(0.85); }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); align-items: center; justify-content: center; z-index: 10; padding: 20px; }
+        .modal-conteudo { background: white; color: #333; border-radius: 35px; padding: 30px; width: 100%; max-width: 300px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.4); animation: popModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popModal { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-emoji { font-size: 85px; margin: 5px 0; animation: flutuar 3s ease-in-out infinite; }
+        @keyframes flutuar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .modal-texto { font-size: 24px; font-weight: 900; margin-bottom: 20px; color: #121212; }
+        .btn-modal-fechar { width: 100%; padding: 12px; font-size: 18px; font-family: 'Nunito', sans-serif; font-weight: 900; border: none; color: white; border-radius: 20px; cursor: pointer; }
+        
+        /* Jogo */
+        .figura-jogo { font-size: 90px; margin-bottom: 5px; animation: flutuar 3s ease-in-out infinite; }
+        .opcoes-jogo { display: flex; gap: 15px; margin-top: 15px; }
+        .bolha-opcao { width: 85px; height: 85px; border-radius: 50%; background: var(--cor-botao); border: 4px solid var(--borda-botao); box-shadow: 0 0 12px var(--sombra); font-size: 36px; color: white; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; -webkit-tap-highlight-color: transparent; }
+        .bolha-opcao:active { transform: scale(0.85); }
+        #feedback-jogo { font-size: 26px; margin-top: 15px; height: 35px; font-weight: 900; text-shadow: 0 0 10px rgba(0,0,0,0.8); }
+    </style>
+</head>
+<body>
+
+    <div id="tela-abertura" class="tela ativa">
+        <div class="bebe-emoji">👶✨</div>
+        <h1>Mundo Mágico do Aprendizado</h1>
+          
+      Para Crianças a partir de  2 anos</h1>
+        <p class="instrucao">Escolha o visual do seu app:</p>
+        
+        <div class="seletor-cores">
+            <div id="cor-menino" class="opcao-cor" style="background: linear-gradient(to bottom, #4facfe, #00f2fe);" onclick="mudarCorInicial('menino')">💙</div>
+            <div id="cor-colorido" class="opcao-cor selecionada" style="background: linear-gradient(to bottom, #ff758c, #ff7eb3);" onclick="mudarCorInicial('colorido')">🌈</div>
+            <div id="cor-menina" class="opcao-cor" style="background: linear-gradient(to bottom, #ff9a9e, #fecfef);" onclick="mudarCorInicial('menina')">💗</div>
+        </div>
+
+        <button id="btn-entrar-acao" class="btn-entrar" onclick="iniciarAplicativo()">Entrar 🌟</button>
+    </div>
+ By Kelki</h1>
+    <div id="tela-temas" class="tela">
+        <div class="controles-topo">
+            <button class="btn-navegacao btn-inicio" onclick="irParaTela('tela-abertura')">🏠 Início</button>
+        </div>
+        <h1>Alfabeto Mágico</h1>
+        <p class="instrucao">Escolha o seu mundo favorito:</p>
+        <div class="menu-botoes">
+            <button class="btn-grande" onclick="escolherTema('mar')">Fundo do Mar 🌊</button>
+            <button class="btn-grande" onclick="escolherTema('safari')">Animais do Safari 🦁</button>
+            <button class="btn-grande" onclick="escolherTema('espaco')">Viagem Espacial 🚀</button>
+        </div>
+    </div>
+
+    <div id="tela-modos" class="tela">
+        <div class="controles-topo">
+            <button class="btn-navegacao btn-inicio" onclick="irParaTela('tela-abertura')">🏠 Início</button>
+            <button class="btn-navegacao" onclick="irParaTela('tela-temas')">⬅ Voltar</button>
+        </div>
+        <h1 id="titulo-tema">Mundo Selecionado</h1>
+        <p class="instrucao">O que vamos fazer agora?</p>
+        <div class="menu-botoes">
+            <button class="btn-grande" onclick="iniciarModo('letras')">Explorar Letrinhas 🅰️</button>
+            <button class="btn-grande" onclick="iniciarModo('numeros')">Contar Números 🔢</button>
+            <button class="btn-grande" onclick="iniciarJogo()">Jogar Adivinhação 🎮</button>
+        </div>
+    </div>
+
+    <div id="tela-explorar" class="tela">
+        <div class="controles-topo">
+            <button class="btn-navegacao btn-inicio" onclick="irParaTela('tela-abertura')">🏠 Início</button>
+            <button class="btn-navegacao" onclick="irParaTela('tela-modos')">⬅ Voltar</button>
+        </div>
+        <h1 id="titulo-explorar">Tocar e Ouvir!</h1>
+        <p class="instrucao">Toque para ver o desenho:</p>
+        <div class="grid-conteudo" id="container-grid"></div>
+    </div>
+
+    <div id="modal-card" class="modal">
+        <div class="modal-conteudo">
+            <div class="modal-emoji" id="modal-emoji">🐋</div>
+            <div class="modal-texto" id="modal-texto">B de BALEIA</div>
+            <button id="btn-modal-ok" class="btn-modal-fechar" onclick="fecharModal()">Continuar 🌟</button>
+        </div>
+    </div>
+
+    <div id="tela-jogo" class="tela">
+        <div class="controles-topo">
+            <button class="btn-navegacao btn-inicio" onclick="irParaTela('tela-abertura')">🏠 Início</button>
+            <button class="btn-navegacao" onclick="irParaTela('tela-modos')">⬅ Voltar</button>
+        </div>
+        <div class="figura-jogo" id="jogo-desenho">🐋</div>
+        <div class="comando" id="jogo-pergunta">Com qual letra começa?</div>
+        <div class="opcoes-jogo">
+            <button class="bolha-opcao" id="jogo-btn0" onclick="jogarResposta(0)">A</button>
+            <button class="bolha-opcao" id="jogo-btn1" onclick="jogarResposta(1)">B</button>
+            <button class="bolha-opcao" id="jogo-btn2" onclick="jogarResposta(2)">C</button>
+        </div>
+        <div id="feedback-jogo"></div>
+    </div>
+
+    <script>
+        const stylesIniciais = {
+            menino: { gradiente: "linear-gradient(to bottom, #4facfe, #00f2fe)", corTextoBotao: "#008acb" },
+            colorido: { gradiente: "linear-gradient(to bottom, #ff758c, #ff7eb3)", corTextoBotao: "#ff758c" },
+            menina: { gradiente: "linear-gradient(to bottom, #ff9a9e, #fecfef)", corTextoBotao: "#e05375" }
+        };
+
+        let visualSelecionado = 'colorido';
+        let temaSelecionado = 'mar';
+        let modoAtual = 'letras';
+        let faseJogoAtual = 0;
+        let vozEscolhida = null;
+
+        function buscarVozFemininaNatural() {
+            if ('speechSynthesis' in window) {
+                const todasVozes = window.speechSynthesis.getVoices();
+                let vozPerfeita = todasVozes.find(v => v.lang.includes('pt') && 
+                    (v.name.toLowerCase().includes('natural') || v.name.toLowerCase().includes('neural')) &&
+                    (v.name.toLowerCase().includes('francisca') || v.name.toLowerCase().includes('antonia') || v.name.toLowerCase().includes('maria') || v.name.toLowerCase().includes('luciana'))
+                );
+                if (!vozPerfeita) {
+                    vozPerfeita = todasVozes.find(v => v.lang.includes('pt') && 
+                        (v.name.toLowerCase().includes('luciana') || v.name.toLowerCase().includes('maria') || v.name.toLowerCase().includes('joana') || v.name.toLowerCase().includes('female'))
+                    );
+                }
+                if (!vozPerfeita) {
+                    vozPerfeita = todasVozes.find(v => v.lang.includes('pt') && v.name.toLowerCase().includes('google'));
+                }
+                if (!vozPerfeita) {
+                    vozPerfeita = todasVozes.find(v => v.lang.includes('pt'));
+                }
+                vozEscolhida = vozPerfeita;
+            }
+        }
+        
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = buscarVozFemininaNatural;
+            buscarVozFemininaNatural();
+        }
+
+        const dadosTemas = {
+            mar: {
+                nome: "Fundo do Mar 🌊",
+                letras: {
+                    A: { palavra: "Âncora", emoji: "⚓" }, B: { palavra: "Baleia", emoji: "🐋" }, C: { palavra: "Caranguejo", emoji: "🦀" }, D: { palavra: "Delfim", emoji: "🐬" }, E: { palavra: "Estrela", emoji: "⭐" }, F: { palavra: "Foca", emoji: "🦭" }, G: { palavra: "Golfinho", emoji: "🐬" }, H: { palavra: "Hélice", emoji: "⛵" }, I: { palavra: "Ilha", emoji: "🏝️" }, J: { palavra: "Jacaré", emoji: "🐊" }, L: { palavra: "Lagosta", emoji: "🦞" }, M: { palavra: "Medusa", emoji: "🪼" }, N: { palavra: "Navio", emoji: "🚢" }, O: { palavra: "Ostra", emoji: "🦪" }, P: { palavra: "Peixinho", emoji: "🐟" }, R: { palavra: "Raia", emoji: "🐠" }, S: { palavra: "Siri", emoji: "🦀" }, T: { palavra: "Tubarão", emoji: "🦈" }, V: { palavra: "Veleiro", emoji: "⛵" }
+                },
+                numeros: {
+                    1: { palavra: "Um navio", emoji: "🚢" }, 2: { palavra: "Duas baleias", emoji: "🐋🐋" }, 3: { palavra: "Três âncoras", emoji: "⚓⚓⚓" }, 4: { palavra: "Quatro estrelas", emoji: "⭐⭐⭐⭐" }, 5: { palavra: "Cinco peixinhos", emoji: "🐟🐟🐟🐟🐟" }, 6: { palavra: "Seis siris", emoji: "🦀🦀🦀🦀🦀🦀" }, 7: { palavra: "Sete conchas", emoji: "🦪🦪🦪🦪🦪🦪🦪" }, 8: { palavra: "Oito polvos", emoji: "🐙🐙🐙🐙🐙🐙🐙🐙" }, 9: { palavra: "Nove golfinhos", emoji: "🐬🐬🐬🐬🐬🐬🐬🐬🐬" }, 10: { palavra: "Dez águas-vivas", emoji: "🪼🪼🪼🪼🦪🪼🪼🪼🪼🪼" }
+                },
+                fases: [
+                    { desenho: "🐋", pergunta: "Com qual letra começa a BALEIA, meu bem?", opcoes: ["M", "B", "P"], correta: "B", tipo: "letra" },
+                    { desenho: "⚓", pergunta: "Com qual letra começa a ÂNCORA, meu amor?", opcoes: ["A", "O", "T"], correta: "A", tipo: "letra" },
+                    { desenho: "🐟", pergunta: "Com qual letra começa o PEIXINHO?", opcoes: ["F", "S", "P"], correta: "P", tipo: "letra" },
+                    { desenho: "⚓⚓⚓", pergunta: "Conta pra mamãe, quantas âncoras tem aqui?", opcoes: ["2", "3", "5"], correta: "3", tipo: "numero" },
+                    { desenho: "🐟🐟🐟🐟🐟", pergunta: "Olha só! Quantos peixinhos tem aqui?", opcoes: ["4", "5", "6"], correta: "5", tipo: "numero" }
+                ]
+            },
+            safari: {
+                nome: "Safari Animais 🦁",
+                letras: {
+                    A: { palavra: "Abelha", emoji: "🐝" }, B: { palavra: "Borboleta", emoji: "🦋" }, C: { palavra: "Coelho", emoji: "🐰" }, D: { palavra: "Dinossauro", emoji: "🦖" }, E: { palavra: "Elefante", emoji: "🐘" }, F: { palavra: "Formiga", emoji: "🐜" }, G: { palavra: "Girafa", emoji: "🦒" }, H: { palavra: "Hipopótamo", emoji: "🦛" }, I: { palavra: "Iguana", emoji: "🦎" }, J: { palavra: "Jacaré", emoji: "🐊" }, L: { palavra: "Leão", emoji: "🦁" }, M: { palavra: "Macaco", emoji: "🐒" }, O: { palavra: "Onça", emoji: "🐆" }, P: { palavra: "Panda", emoji: "🐼" }, R: { palavra: "Rato", emoji: "🐭" }, S: { palavra: "Sapo", emoji: "🐸" }, T: { palavra: "Tigre", emoji: "🐯" }, U: { palavra: "Urso", emoji: "🐻" }, V: { palavra: "Vaca", emoji: "🐮" }, Z: { palavra: "Zebra", emoji: "🦓" }
+                },
+                numeros: {
+                    1: { palavra: "Um leão", emoji: "🦁" }, 2: { palavra: "Duas girafas", emoji: "🦒🦒" }, 3: { palavra: "Três macacos", emoji: "🐒🐒🐒" }, 4: { palavra: "Quatro sapos", emoji: "🐸🐸🐸🐸" }, 5: { palavra: "Cinco abelhas", emoji: "🐝🐝🐝🐝🐝" }, 6: { palavra: "Seis pandas", emoji: "🐼🐼🐼🐼🐼🐼" }, 7: { palavra: "Sete coelhos", emoji: "🐰🐰🐰🐰🐰🐰🐰" }, 8: { palavra: "Oito tigres", emoji: "🐯🐯🐯🐯🐯🐯🐯🐯" }, 9: { palavra: "Nove formigas", emoji: "🐜🐜🐜🐜🐜🐜🐜🐜🐜" }, 10: { palavra: "Dez borboletas", emoji: "🦋🦋🦋🦋🦋🦋🦋🦋🦋🦋" }
+                },
+                fases: [
+                    { desenho: "🦁", pergunta: "Com qual letra começa o LEÃO, meu anjo?", opcoes: ["O", "L", "M"], correta: "L", tipo: "letra" },
+                    { desenho: "🦒", pergunta: "Com qual letra começa a GIRAFA?", opcoes: ["G", "J", "F"], correta: "G", tipo: "letra" },
+                    { desenho: "🐒🐒🐒", pergunta: "Vamos contar? Quantos macacos tem aqui?", opcoes: ["2", "3", "4"], correta: "3", tipo: "numero" },
+                    { desenho: "🐸🐸🐸🐸", pergunta: "Quantos sapos fofos tem aqui?", opcoes: ["4", "6", "3"], correta: "4", tipo: "numero" }
+                ]
+            },
+            espaco: {
+                nome: "Viagem Espacial 🚀",
+                letras: {
+                    A: { palavra: "Astronauta", emoji: "👨‍🚀" }, B: { palavra: "Buraco Negro", emoji: "🕳️" }, C: { palavra: "Cometa", emoji: "☄️" }, D: { palavra: "Disco Voador", emoji: "🛸" }, E: { palavra: "Estrela", emoji: "⭐" }, F: { palavra: "Foguete", emoji: "🚀" }, G: { palavra: "Galáxia", emoji: "🌀" }, I: { palavra: "Alien", emoji: "👾" }, J: { palavra: "Júpiter", emoji: "🪐" }, L: { palavra: "Lua", emoji: "🌙" }, M: { palavra: "Meteoro", emoji: "☄️" }, N: { palavra: "Nave", emoji: "🚀" }, O: { palavra: "Órbita", emoji: "💫" }, P: { palavra: "Planeta", emoji: "🪐" }, R: { palavra: "Robô", emoji: "🤖" }, S: { palavra: "Sol", emoji: "☀️" }, T: { palavra: "Telescópio", emoji: "🔭" }, U: { palavra: "Universo", emoji: "🌌" }
+                },
+                numeros: {
+                    1: { palavra: "Um foguete", emoji: "🚀" }, 2: { palavra: "Duas luas", emoji: "🌙🌙" }, 3: { palavra: "Três estrelas", emoji: "⭐⭐⭐" }, 4: { palavra: "Quatro robôs", emoji: "🤖🤖🤖🤖" }, 5: { palavra: "Cinco planetas", emoji: "🪐🪐🪐🪐🪐" }, 6: { palavra: "Seis cometas", emoji: "☄️☄️☄️☄️☄️☄️" }, 7: { palavra: "Sete discos voadores", emoji: "🛸🛸🛸🛸🛸🛸🛸" }, 8: { palavra: "Oito ETs", emoji: "👾👾👾👾👾👾👾👾" }, 9: { palavra: "Nove astronautas", emoji: "👨‍🚀👨‍🚀👨‍🚀👨‍🚀👨‍🚀👨‍🚀👨‍🚀👨‍🚀👨‍🚀" }, 10: { palavra: "Dez sóis", emoji: "☀️☀️☀️☀️☀️☀️☀️☀️☀️☀️" }
+                },
+                fases: [
+                    { desenho: "🚀", pergunta: "Com qual letra começa o FOGUETE, meu amor?", opcoes: ["F", "V", "E"], correta: "F", tipo: "letra" },
+                    { desenho: "🌙🌙", pergunta: "Quantas luas lindas tem aqui?", opcoes: ["1", "2", "3"], correta: "2", tipo: "numero" },
+                    { desenho: "🤖🤖🤖🤖", pergunta: "Quantos robôs espaciais tem aqui?", opcoes: ["4", "5", "2"], correta: "4", tipo: "numero" }
+                ]
+            }
+        };
+
+        function mudarCorInicial(tipo) {
+            visualSelecionado = tipo;
+            document.querySelectorAll('.opcao-cor').forEach(el => el.classList.remove('selecionada'));
+            document.getElementById(`cor-${tipo}`).classList.add('selecionada');
+            
+            document.documentElement.style.setProperty('--gradiente-atual', stylesIniciais[tipo].gradiente);
+            document.getElementById('btn-entrar-acao').style.color = stylesIniciais[tipo].corTextoBotao;
+            document.getElementById('btn-modal-ok').style.background = stylesIniciais[tipo].gradiente;
+        }
+
+        function falarTextoMaterno(texto) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const pronuncia = new SpeechSynthesisUtterance(texto);
+                pronuncia.lang = 'pt-BR';
+                
+                if (vozEscolhida) {
+                    pronuncia.voice = vozEscolhida;
+                }
+                
+                pronuncia.rate = 1.95;  // Fala carinhosa e pausada
+                pronuncia.pitch = 0.5;   // Sem distorções metálicas
+                window.speechSynthesis.speak(pronuncia);
+            }
+        }
+      
+        function tocarRisadaDeBebeReal() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                
+                const carregarRisada = (tempo, frequenciaBase, duracao) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(frequenciaBase, tempo);
+                    // Efeito de vibração da gargalhada infantil
+                    osc.frequency.setValueAtTime(frequenciaBase + 80, tempo + duracao * 0.3);
+                    osc.frequency.setValueAtTime(frequenciaBase - 40, tempo + duracao * 0.6);
+                    
+                    gain.gain.setValueAtTime(0, tempo);
+                    gain.gain.linearRampToValueAtTime(0.2, tempo + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.001, tempo + duracao);
+                    
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    
+                    osc.start(tempo);
+                    osc.stop(tempo + duracao);
+                };
+
+                // Sequência de 4 pequenas risadinhas agudas e seguidas de bebê (gargalhada fofa)
+                let tempoInicial = ctx.currentTime;
+                carregarRisada(tempoInicial, 650, 0.22);
+                carregarRisada(tempoInicial + 0.25, 720, 0.18);
+                carregarRisada(tempoInicial + 0.45, 680, 0.20);
+                carregarRisada(tempoInicial + 0.65, 800, 0.35);
+            } catch(e) {
+                console.log("Audio API não suportada");
+            }
+        }
+
+        function irParaTela(idTela) {
+            document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+            document.getElementById(idTela).classList.add('ativa');
+        }
+
+        function tocareBoasVindas() {
+            falarTextoMaterno("Olá! Vamos brincar e aprender juntos com a mamãe?");
+        }
+
+        function iniciarAplicativo() {
+            tocarRisadaDeBebeReal(); // Dispara o som real de risada instantaneamente
+            setTimeout(() => { 
+                tocareBoasVindas();
+                irParaTela('tela-temas'); 
+            }, 950);
+        }
+
+        function escolherTema(tema) {
+            temaSelecionado = theme = tema;
+            document.getElementById('titulo-tema').innerText = dadosTemas[tema].nome;
+            irParaTela('tela-modos');
+            let nomeFalar = tema === 'mar' ? "Fundo do Mar" : (tema === 'safari' ? "Animais do Safari" : "Viagem Espacial");
+            let saudacoes = ["Que lindo! Vamos para o mundo ", "uau que legal! Entramos no mundo ", "Oba! Vamos ver o mundo "];
+            let fraseAleatoria = saudacoes[Math.floor(Math.random() * saudacoes.length)] + nomeFalar;
+            falarTextoMaterno(fraseAleatoria);
+        }
+
+        function iniciarModo(modo) {
+            modoAtual = modo;
+            const container = document.getElementById('container-grid');
+            container.innerHTML = '';
+            
+            document.getElementById('titulo-explorar').innerText = modo === 'letras' ? "Explorar Letrinhas! 🅰️" : "Contar Números! 🔢";
+
+            const bancoDados = dadosTemas[temaSelecionado][modo];
+            const chaves = Object.keys(bancoDados);
+            
+            chaves.forEach(chave => {
+                const bolha = document.createElement('button');
+                bolha.className = 'bolha-item';
+                bolha.innerText = chave;
+                bolha.onclick = () => verDetalhe(chave);
+                container.appendChild(bolha);
+            });
+            irParaTela('tela-explorar');
+            falarTextoMaterno(modo === 'letras' ? "Toque nas letrinhas para ver o desenho!" : "Toque nos números para contar com a mamãe!");
+        }
+
+        function verDetalhe(chave) {
+            const item = dadosTemas[temaSelecionado][modoAtual][chave];
+            if(!item) return;
+            document.getElementById('modal-emoji').innerText = item.emoji;
+            
+            if (modoAtual === 'letras') {
+                document.getElementById('modal-texto').innerText = `${chave} de ${item.palavra.toUpperCase()}`;
+                falarTextoMaterno(`Letra ${chave}! ${chave} de ${item.palavra}!`);
+            } else {
+                document.getElementById('modal-texto').innerText = `${chave} - ${item.palavra.toUpperCase()}`;
+                falarTextoMaterno(`Número ${chave}! ${item.palavra}!`);
+            }
+            document.getElementById('modal-card').style.display = 'flex';
+        }
+
+        function fecharModal() { document.getElementById('modal-card').style.display = 'none'; }
+
+        function iniciarJogo() {
+            faseJogoAtual = 0;
+            carregarFaseJogo();
+            irParaTela('tela-jogo');
+        }
+
+        function carregarFaseJogo() {
+            document.getElementById('feedback-jogo').innerText = '';
+            const fasesTema = dadosTemas[temaSelecionado].fases;
+            const dadosFase = fasesTema[faseJogoAtual];
+            document.getElementById('jogo-desenho').innerText = dadosFase.desenho;
+            document.getElementById('jogo-pergunta').innerText = dadosFase.pergunta;
+            document.getElementById('jogo-btn0').innerText = dadosFase.opcoes[0];
+            document.getElementById('jogo-btn1').innerText = dadosFase.opcoes[1];
+            document.getElementById('jogo-btn2').innerText = dadosFase.opcoes[2];
+            falarTextoMaterno(dadosFase.pergunta);
+        }
+
+        function jogarResposta(indice) {
+            const fasesTema = dadosTemas[temaSelecionado].fases;
+            const dadosFase = fasesTema[faseJogoAtual];
+            const escolha = dadosFase.opcoes[indice];
+            const feedback = document.getElementById('feedback-jogo');
+
+            if (escolha === dadosFase.correta) {
+                let elogios = ["Isso meu amor! Você acertou!", "Muito bem, que orgulho!", "Parabéns, meu coração, tá certinho!"];
+                let elogioAleatorio = elogios[Math.floor(Math.random() * elogios.length)];
+                
+                feedback.innerText = "Muito bem! 🎉";
+                feedback.style.color = "var(--cor-sucesso)";
+                falarTextoMaterno(elogioAleatorio);
+
+                setTimeout(() => {
+                    faseJogoAtual++;
+                    if (faseJogoAtual < fasesTema.length) { carregarFaseJogo(); } 
+                    else {
+                        feedback.innerText = "Parabéns! Você venceu! 🏆";
+                        falarTextoMaterno("Parabéns, meu amor! Você completou o jogo inteiro!");
+                        setTimeout(() => irParaTela('tela-modos'), 2500);
+                    }
+                }, 2000);
+            } else {
+                let incentivos = ["Tente de novo, meu coração!", "Quase! Vamos tentar mais uma vez?", "Olha direitinho e tenta de novo com a mamãe!"];
+                let incentivoAleatorio = incentivos[Math.floor(Math.random() * incentivos.length)];
+                
+                feedback.innerText = "Tente outra vez! ✨";
+                feedback.style.color = "var(--cor-erro)";
+                falarTextoMaterno(incentivoAleatorio);
+            }
+        }
+        
+        // Inicia com o padrão colorido ativo
+        mudarCorInicial('colorido');
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js');
+    });
+  }
+</script>
+</body>
+</html>
