@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
-<link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json">
     <style>
         :root {
             --gradiente-atual: linear-gradient(to bottom, #ff758c, #ff7eb3); /* Padrão inicial */
@@ -73,6 +73,27 @@
         .bolha-opcao { width: 85px; height: 85px; border-radius: 50%; background: var(--cor-botao); border: 4px solid var(--borda-botao); box-shadow: 0 0 12px var(--sombra); font-size: 36px; color: white; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; -webkit-tap-highlight-color: transparent; }
         .bolha-opcao:active { transform: scale(0.85); }
         #feedback-jogo { font-size: 26px; margin-top: 15px; height: 35px; font-weight: 900; text-shadow: 0 0 10px rgba(0,0,0,0.8); }
+
+        /* Animação das Bolhas Mágicas */
+        .bolha-flutuante {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            border: 3px solid rgba(255, 255, 255, 0.7);
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.6), 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            cursor: pointer;
+            animation: balancoSuave 4s ease-in-out infinite alternate;
+            transition: transform 0.1s ease-out, opacity 0.2s;
+        }
+        @keyframes balancoSuave {
+            0% { transform: translateY(0) translateX(0); }
+            100% { transform: translateY(-15px) translateX(10px); }
+        }
     </style>
 </head>
 <body>
@@ -80,7 +101,6 @@
     <div id="tela-abertura" class="tela ativa">
         <div class="bebe-emoji">👶✨</div>
         <h1>Mundo Mágico do Aprendizado</h1>
-          
         <p class="instrucao">Para Crianças a partir de 2 anos</p>
         <p class="instrucao">Escolha o visual do seu app:</p>
         
@@ -92,7 +112,7 @@
 
         <button id="btn-entrar-acao" class="btn-entrar" onclick="iniciarAplicativo()">Entrar 🌟</button>
     </div>
- <p style="text-align: center; opacity: 0.8; font-size: 18px;">By Kelki</p>
+
     <div id="tela-temas" class="tela">
         <div class="controles-topo">
             <button class="btn-navegacao btn-inicio" onclick="irParaTela('tela-abertura')">🏠 Início</button>
@@ -103,7 +123,9 @@
             <button class="btn-grande" onclick="escolherTema('mar')">Fundo do Mar 🌊</button>
             <button class="btn-grande" onclick="escolherTema('safari')">Animais do Safari 🦁</button>
             <button class="btn-grande" onclick="escolherTema('espaco')">Viagem Espacial 🚀</button>
+            <button class="btn-grande" style="background: linear-gradient(135deg, #ff9a9e, #fecfef); color: #d63384;" onclick="abrirNumerosMagicos()">Números Mágicos ✨🔢</button>
         </div>
+        <p style="text-align: center; opacity: 0.8; font-size: 18px; margin-top: 20px;">By Kelki</p>
     </div>
 
     <div id="tela-modos" class="tela">
@@ -153,6 +175,17 @@
         <div id="feedback-jogo"></div>
     </div>
 
+    <!-- TELA DOS NÚMEROS MÁGICOS (BOLHAS FLUTUANTES) -->
+    <div id="tela-numeros-magicos" class="tela" style="position: relative; background: linear-gradient(to bottom, #74b9ff, #81ecec); height: 100vh; overflow: hidden;">
+        <div class="controles-topo">
+            <button class="btn-navegacao btn-inicio" onclick="irParaTela('tela-abertura')">🏠 Início</button>
+            <button class="btn-navegacao" onclick="irParaTela('tela-temas')">⬅ Voltar</button>
+        </div>
+        <h1 style="color: white; text-shadow: 2px 2px 8px rgba(0,0,0,0.2); margin-top: 60px;">Bolhas Mágicas! 🫧</h1>
+        <p class="instrucao" style="color: white;">Toque nas bolhas para estourar e contar!</p>
+        <div id="cenario-bolhas" style="position: absolute; top: 150px; left: 0; width: 100%; height: calc(100vh - 180px);"></div>
+    </div>
+
     <script>
         const stylesIniciais = {
             menino: { gradiente: "linear-gradient(to bottom, #4facfe, #00f2fe)", corTextoBotao: "#008acb" },
@@ -200,14 +233,19 @@
                     A: { palavra: "Âncora", emoji: "⚓" }, B: { palavra: "Baleia", emoji: "🐋" }, C: { palavra: "Caranguejo", emoji: "🦀" }, D: { palavra: "Delfim", emoji: "🐬" }, E: { palavra: "Estrela", emoji: "⭐" }, F: { palavra: "Foca", emoji: "🦭" }, G: { palavra: "Golfinho", emoji: "🐬" }, H: { palavra: "Hélice", emoji: "⛵" }, I: { palavra: "Ilha", emoji: "🏝️" }, J: { palavra: "Jacaré", emoji: "🐊" }, L: { palavra: "Lagosta", emoji: "🦞" }, M: { palavra: "Medusa", emoji: "🪼" }, N: { palavra: "Navio", emoji: "🚢" }, O: { palavra: "Ostra", emoji: "🦪" }, P: { palavra: "Peixinho", emoji: "🐟" }, R: { palavra: "Raia", emoji: "🐠" }, S: { palavra: "Siri", emoji: "🦀" }, T: { palavra: "Tubarão", emoji: "🦈" }, V: { palavra: "Veleiro", emoji: "⛵" }
                 },
                 numeros: {
-                    1: { palavra: "Um navio", emoji: "🚢" }, 2: { palavra: "Duas baleias", emoji: "🐋🐋" }, 3: { palavra: "Três âncoras", emoji: "⚓⚓⚓" }, 4: { palavra: "Quatro estrelas", emoji: "⭐⭐⭐⭐" }, 5: { palavra: "Cinco peixinhos", emoji: "🐟🐟🐟🐟🐟" }, 6: { palavra: "Seis siris", emoji: "🦀🦀🦀🦀🦀🦀" }, 7: { palavra: "Sete conchas", emoji: "🦪🦪🦪🦪🦪🦪🦪" }, 8: { palavra: "Oito polvos", emoji: "🐙🐙🐙🐙🐙🐙🐙🐙" }, 9: { palavra: "Nove golfinhos", emoji: "🐬🐬🐬🐬🐬🐬🐬🐬🐬" }, 10: { palavra: "Dez águas-vivas", emoji: "🪼🪼🪼🪼🦪🪼🪼🪼🪼🪼" }
+                    1: { palavra: "Um navio", emoji: "🚢" }, 2: { palavra: "Duas baleias", emoji: "🐋🐋" }, 3: { palavra: "Três âncoras", emoji: "⚓⚓⚓" }, 4: { palavra: "Quatro estrelas", emoji: "⭐⭐⭐⭐" }, 5: { width: "Cinco peixinhos", emoji: "🐟🐟🐟🐟🐟" }, 6: { palavra: "Seis siris", emoji: "🦀🦀🦀🦀🦀🦀" }, 7: { palavra: "Sete conchas", emoji: "🦪🦪🦪🦪🦪🦪🦪" }, 8: { palavra: "Oito polvos", emoji: "🐙🐙🐙🐙🐙🐙🐙🐙" }, 9: { palavra: "Nove golfinhos", emoji: "🐬🐬🐬🐬🐬🐬🐬🐬🐬" }, 10: { palavra: "Dez águas-vivas", emoji: "🪼🪼🪼🪼🦪🪼🪼🪼🪼🪼" }
                 },
                 fases: [
                     { desenho: "🐋", pergunta: "Com qual letra começa a BALEIA, meu bem?", opcoes: ["M", "B", "P"], correta: "B", tipo: "letra" },
                     { desenho: "⚓", pergunta: "Com qual letra começa a ÂNCORA, meu amor?", opcoes: ["A", "O", "T"], correta: "A", tipo: "letra" },
                     { desenho: "🐟", pergunta: "Com qual letra começa o PEIXINHO?", opcoes: ["F", "S", "P"], correta: "P", tipo: "letra" },
                     { desenho: "⚓⚓⚓", pergunta: "Conta pra mamãe, quantas âncoras tem aqui?", opcoes: ["2", "3", "5"], correta: "3", tipo: "numero" },
-                    { desenho: "🐟🐟🐟🐟🐟", pergunta: "Olha só! Quantos peixinhos tem aqui?", opcoes: ["4", "5", "6"], correta: "5", tipo: "numero" }
+                    { desenho: "🐟🐟🐟🐟🐟", pergunta: "Olha só! Quantos peixinhos tem aqui?", opcoes: ["4", "5", "6"], correta: "5", tipo: "numero" },
+                    { desenho: "🦀", pergunta: "Com qual letra começa o SIRI, meu coração?", opcoes: ["S", "R", "K"], correta: "S", tipo: "letra" },
+                    { desenho: "🦈", pergunta: "Com qual letra começa o TUBARÃO, meu anjo?", opcoes: ["J", "T", "L"], correta: "T", tipo: "letra" },
+                    { desenho: "🚢", pergunta: "Com qual letra começa o NAVIO?", opcoes: ["N", "D", "V"], correta: "N", tipo: "letra" },
+                    { desenho: "🦀🦀", pergunta: "Conta bem bonito, quantos siris tem aqui?", opcoes: ["1", "3", "2"], correta: "2", tipo: "numero" },
+                    { desenho: "⭐⭐⭐⭐", pergunta: "Olha que lindo! Quantas estrelas tem no mar?", opcoes: ["4", "6", "3"], correta: "4", tipo: "numero" }
                 ]
             },
             safari: {
@@ -261,8 +299,8 @@
                     pronuncia.voice = vozEscolhida;
                 }
                 
-                pronuncia.rate = 1.95;  // Fala carinhosa e pausada
-                pronuncia.pitch = 0.5;   // Sem distorções metálicas
+                pronuncia.rate = 1.0;  // Ritmo calmo e perfeito para todos os navegadores
+                pronuncia.pitch = 1.0; 
                 window.speechSynthesis.speak(pronuncia);
             }
         }
@@ -279,7 +317,6 @@
                     
                     osc.type = 'triangle';
                     osc.frequency.setValueAtTime(frequenciaBase, tempo);
-                    // Efeito de vibração da gargalhada infantil
                     osc.frequency.setValueAtTime(frequenciaBase + 80, tempo + duracao * 0.3);
                     osc.frequency.setValueAtTime(frequenciaBase - 40, tempo + duracao * 0.6);
                     
@@ -294,7 +331,6 @@
                     osc.stop(tempo + duracao);
                 };
 
-                // Sequência de 4 pequenas risadinhas agudas e seguidas de bebê (gargalhada fofa)
                 let tempoInicial = ctx.currentTime;
                 carregarRisada(tempoInicial, 650, 0.22);
                 carregarRisada(tempoInicial + 0.25, 720, 0.18);
@@ -315,7 +351,7 @@
         }
 
         function iniciarAplicativo() {
-            tocarRisadaDeBebeReal(); // Dispara o som real de risada instantaneamente
+            tocarRisadaDeBebeReal();
             setTimeout(() => { 
                 tocareBoasVindas();
                 irParaTela('tela-temas'); 
@@ -323,7 +359,7 @@
         }
 
         function escolherTema(tema) {
-            temaSelecionado = theme = tema;
+            temaSelecionado = tema;
             document.getElementById('titulo-tema').innerText = dadosTemas[tema].nome;
             irParaTela('tela-modos');
             let nomeFalar = tema === 'mar' ? "Fundo do Mar" : (tema === 'safari' ? "Animais do Safari" : "Viagem Espacial");
@@ -420,17 +456,81 @@
                 falarTextoMaterno(incentivoAleatorio);
             }
         }
-        
-        // Inicia com o padrão colorido ativo
-        mudarCorInicial('colorido');
-</script>
 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js');
-    });
-  }
-</script>
+        function abrirNumerosMagicos() {
+            irParaTela('tela-numeros-magicos');
+            falarTextoMaterno("Olha as bolhas! Vamos estourar e contar os números mágicos?");
+            
+            const cenario = document.getElementById('cenario-bolhas');
+            cenario.innerHTML = ''; 
+            
+            const coresNumeros = ["#ff4757", "#2ed573", "#1e90ff", "#ffa502", "#9b59b6", "#ff6b81", "#ff4757", "#2ed573", "#1e90ff", "#ffa502"];
+            
+            for (let i = 1; i <= 10; i++) {
+                const bolha = document.createElement('div');
+                bolha.className = 'bolha-flutuante';
+                bolha.innerText = i;
+                
+                const tamanho = 75; 
+                bolha.style.width = `${tamanho}px`;
+                bolha.style.height = `${tamanho}px`;
+                bolha.style.fontSize = '36px';
+                bolha.style.color = coresNumeros[i - 1];
+                
+                const posX = Math.random() * (window.innerWidth - tamanho - 20);
+                const posY = Math.random() * (window.innerHeight - 320);
+                
+                bolha.style.left = `${posX}px`;
+                bolha.style.top = `${posY}px`;
+                bolha.style.animationDelay = `${Math.random() * 2}s`;
+                
+                bolha.onclick = () => {
+                    try {
+                        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                        if (AudioCtx) {
+                            const ctx = new AudioCtx();
+                            const osc = ctx.createOscillator();
+                            const gain = ctx.createGain();
+                            osc.type = 'sine';
+                            osc.frequency.setValueAtTime(400, ctx.currentTime);
+                            osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.08);
+                            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                            gain.gain.linearRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+                            osc.connect(gain); gain.connect(ctx.destination);
+                            osc.start(); osc.stop(ctx.currentTime + 0.08);
+                        }
+                    } catch(e) {}
+                    
+                    bolha.style.transform = 'scale(1.4)';
+                    bolha.style.opacity = '0';
+                    bolha.style.pointerEvents = 'none'; 
+                    
+                    setTimeout(() => {
+                        falarTextoMaterno(`${i}`);
+                    }, 50);
+                    
+                    setTimeout(() => {
+                        bolha.remove();
+                        if (cenario.children.length === 0) {
+                            falarTextoMaterno("Parabéns! Você estourou todas as bolhas! Vamos de novo?");
+                            abrirNumerosMagicos();
+                        }
+                    }, 300);
+                };
+                
+                cenario.appendChild(bolha);
+            }
+        }
+        
+        mudarCorInicial('colorido');
+    </script>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
 </body>
 </html>
