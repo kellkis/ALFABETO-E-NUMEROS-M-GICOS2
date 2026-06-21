@@ -44,8 +44,8 @@
 
         h1 { font-size: 34px; margin-bottom: 5px; text-shadow: 2px 4px 10px rgba(0,0,0,0.3); font-weight: 900; }
         p.instrucao { font-size: 18px; margin-bottom: 20px; text-shadow: 1px 2px 5px rgba(0,0,0,0.3); }
-        .menu-botoes { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
-        .btn-grande { padding: 16px; font-size: 20px; font-family: 'Nunito', sans-serif; font-weight: 900; border-radius: 22px; border: 4px solid white; background: rgba(255, 255, 255, 0.2); color: white; cursor: pointer; box-shadow: 0 6px 12px rgba(0,0,0,0.15); transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 12px; -webkit-tap-highlight-color: transparent; }
+        .menu-botoes { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; max-height: 70vh; overflow-y: auto; padding: 5px; }
+        .btn-grande { padding: 16px; font-size: 20px; font-family: 'Nunito', sans-serif; font-weight: 900; border-radius: 22px; border: 4px solid white; background: rgba(255, 255, 255, 0.2); color: white; cursor: pointer; box-shadow: 0 6px 12px rgba(0,0,0,0.15); transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 12px; -webkit-tap-highlight-color: transparent; flex-shrink: 0; }
         .btn-grande:active { transform: scale(0.93); }
         
         /* Controles superiores */
@@ -94,6 +94,19 @@
             0% { transform: translateY(0) translateX(0); }
             100% { transform: translateY(-15px) translateX(10px); }
         }
+
+        /* Estilos dos Itens Escondidos */
+        .item-escondido {
+            position: absolute;
+            font-size: 55px;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.3s;
+            animation: flutuarSuave 3s ease-in-out infinite alternate;
+        }
+        @keyframes flutuarSuave {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-8px) rotate(5deg); }
+        }
     </style>
 </head>
 <body>
@@ -117,15 +130,30 @@
         <div class="controles-topo">
             <button class="btn-navegacao btn-inicio" onclick="irParaTela('tela-abertura')">🏠 Início</button>
         </div>
-        <h1>Alfabeto Mágico</h1>
-        <p class="instrucao">Escolha o seu mundo favorito:</p>
+        <h1>Mundos Mágicos</h1>
+        <p class="instrucao">Escolha para onde vamos brincar:</p>
         <div class="menu-botoes">
             <button class="btn-grande" onclick="escolherTema('mar')">Fundo do Mar 🌊</button>
             <button class="btn-grande" onclick="escolherTema('safari')">Animais do Safari 🦁</button>
             <button class="btn-grande" onclick="escolherTema('espaco')">Viagem Espacial 🚀</button>
-            <button class="btn-grande" style="background: linear-gradient(135deg, #ff9a9e, #fecfef); color: #d63384;" onclick="abrirNumerosMagicos()">Números Mágicos ✨🔢</button>
+            <button class="btn-grande" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #2b5876;" onclick="abrirNumerosMagicos()">Números Mágicos ✨🔢</button>
+            <button class="btn-grande" style="background: linear-gradient(135deg, #fbc2eb, #a6c1ee); color: #6654da;" onclick="abrirMenuAventuras()">Aventuras Encantadas ✨👸</button>
         </div>
-        <p style="text-align: center; opacity: 0.8; font-size: 18px; margin-top: 20px;">By Kelki</p>
+        <p style="text-align: center; opacity: 0.8; font-size: 18px; margin-top: 15px; margin-bottom: 0;">By Kelki</p>
+    </div>
+
+    <!-- MENU DE SELEÇÃO DE AVENTURAS -->
+    <div id="tela-menu-aventuras" class="tela">
+        <div class="controles-topo">
+            <button class="btn-navegacao btn-inicio" onclick="irParaTela('tela-abertura')">🏠 Início</button>
+            <button class="btn-navegacao" onclick="irParaTela('tela-temas')">⬅ Voltar</button>
+        </div>
+        <h1>Aventuras Encantadas ✨</h1>
+        <p class="instrucao">Escolha o seu cenário de fadas:</p>
+        <div class="menu-botoes">
+            <button class="btn-grande" style="background: linear-gradient(to bottom, #fecfef, #ff9a9e); color: #d63384;" onclick="iniciarJogoAventura('castelo')">Castelo das Princesas 🏰👸</button>
+            <button class="btn-grande" style="background: linear-gradient(to bottom, #81ecec, #74b9ff); color: #0984e3;" onclick="iniciarJogoAventura('sereias')">Reino das Sereias 🧜‍♀️🐠</button>
+        </div>
     </div>
 
     <div id="tela-modos" class="tela">
@@ -186,6 +214,22 @@
         <div id="cenario-bolhas" style="position: absolute; top: 150px; left: 0; width: 100%; height: calc(100vh - 180px);"></div>
     </div>
 
+    <!-- TELA DO JOGO ENCONTRAR OBJETOS -->
+    <div id="tela-jogo-aventura" class="tela" style="position: relative; height: 100vh; overflow: hidden; padding: 0;">
+        <div class="controles-topo">
+            <button class="btn-navegacao btn-inicio" onclick="irParaTela('tela-abertura')">🏠 Início</button>
+            <button class="btn-navegacao" onclick="irParaTela('tela-menu-aventuras')">⬅ Voltar</button>
+        </div>
+        <div style="padding: 20px; padding-top: 65px; z-index: 4; width: 100%;">
+            <h1 id="aventura-titulo" style="color: white; text-shadow: 2px 2px 8px rgba(0,0,0,0.3); margin: 0; font-size: 28px;">Castelo Mágico</h1>
+            <div id="painel-procurar" style="background: rgba(255,255,255,0.9); color: #333; padding: 10px 20px; border-radius: 25px; margin-top: 10px; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); font-weight: 900; font-size: 18px;">
+                <span>Encontre o item:</span> <span id="aventura-item-procurado-emoji" style="font-size: 32px;">👑</span>
+            </div>
+        </div>
+        <!-- Cenário interativo onde os itens mudam de lugar -->
+        <div id="cenario-aventura" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
+    </div>
+
     <script>
         const stylesIniciais = {
             menino: { gradiente: "linear-gradient(to bottom, #4facfe, #00f2fe)", corTextoBotao: "#008acb" },
@@ -198,6 +242,42 @@
         let modoAtual = 'letras';
         let faseJogoAtual = 0;
         let vozEscolhida = null;
+
+        // Variáveis novas do jogo de aventura
+        let aventuraAtual = 'castelo';
+        let itensAventuraFase = [];
+        let itemObjetivoIndex = 0;
+
+        const dadosAventuras = {
+            castelo: {
+                nome: "Castelo das Princesas 🏰",
+                fundo: "linear-gradient(to bottom, #ecd2e4, #b19ffb)",
+                introducao: "Bem-vinda ao castelo, minha princesa! Vamos encontrar os objetos mágicos com a mamãe?",
+                itens: [
+                    { emoji: "👑", nome: "a coroa da princesa, meu bem", falaSucesso: "Isso aí! Achou a coroa linda da princesa!" },
+                    { emoji: "👠", nome: "o sapatinho de cristal da princesa, meu amor", falaSucesso: "Que lindo, você achou o sapatinho de cristal!" },
+                    { emoji: "🪄", nome: "a varinha de condão da fada", falaSucesso: "Perfeito! A varinha de condão faz mágica!" },
+                    { emoji: "🪞", nome: "o espelho mágico, minha princesa", falaSucesso: "Uau, você encontrou o espelho mágico!" },
+                    { emoji: "💍", nome: "o anel brilhante", falaSucesso: "Muito bem! Que anel mais reluzente e lindo!" },
+                    { emoji: "🦄", nome: "o unicórnio fofinho do castelo", falaSucesso: "Aí sim! Você encontrou o unicórnio mágico!" }
+                ],
+                decorativos: ["🏰", "✨", "🌸", "⭐", "🦋", "🎨", "🧸", "🎈"]
+            },
+            sereias: {
+                nome: "Reino das Sereias 🧜‍♀️",
+                fundo: "linear-gradient(to bottom, #81ecec, #00cec9)",
+                introducao: "Uau, mergulhamos no reino das sereias! Ajuda a mamãe a achar os tesouros do mar?",
+                itens: [
+                    { emoji: "🧜‍♀️", nome: "a linda sereia do mar, meu anjo", falaSucesso: "Olha ela aí! Você encontrou a sereia linda!" },
+                    { emoji: "🦪", nome: "a concha com a pérola brilhante", falaSucesso: "Muito bem! Uma pérola brilhante e preciosa!" },
+                    { emoji: "🪙", nome: "o baú de tesouro dourado", falaSucesso: "Incrível! Achou o baú cheio de moedas de ouro!" },
+                    { emoji: "🐠", nome: "o peixinho colorido, meu amor", falaSucesso: "Isso aí! Você achou o peixinho amigo da sereia!" },
+                    { emoji: "🪮", nome: "o pente de cabelo da sereia", falaSucesso: "Perfeito, coração! Esse é o pente mágico dela!" },
+                    { emoji: "🦀", nome: "o caranguejo brincalhão", falaSucesso: "Que legal! O caranguejo estava escondidinho!" }
+                ],
+                decorativos: ["🌊", "🫧", "🌿", "🐬", "🐙", "🦑", "🦐", "🐡"]
+            }
+        };
 
         function buscarVozFemininaNatural() {
             if ('speechSynthesis' in window) {
@@ -233,7 +313,7 @@
                     A: { palavra: "Âncora", emoji: "⚓" }, B: { palavra: "Baleia", emoji: "🐋" }, C: { palavra: "Caranguejo", emoji: "🦀" }, D: { palavra: "Delfim", emoji: "🐬" }, E: { palavra: "Estrela", emoji: "⭐" }, F: { palavra: "Foca", emoji: "🦭" }, G: { palavra: "Golfinho", emoji: "🐬" }, H: { palavra: "Hélice", emoji: "⛵" }, I: { palavra: "Ilha", emoji: "🏝️" }, J: { palavra: "Jacaré", emoji: "🐊" }, L: { palavra: "Lagosta", emoji: "🦞" }, M: { palavra: "Medusa", emoji: "🪼" }, N: { palavra: "Navio", emoji: "🚢" }, O: { palavra: "Ostra", emoji: "🦪" }, P: { palavra: "Peixinho", emoji: "🐟" }, R: { palavra: "Raia", emoji: "🐠" }, S: { palavra: "Siri", emoji: "🦀" }, T: { palavra: "Tubarão", emoji: "🦈" }, V: { palavra: "Veleiro", emoji: "⛵" }
                 },
                 numeros: {
-                    1: { palavra: "Um navio", emoji: "🚢" }, 2: { palavra: "Duas baleias", emoji: "🐋🐋" }, 3: { palavra: "Três âncoras", emoji: "⚓⚓⚓" }, 4: { palavra: "Quatro estrelas", emoji: "⭐⭐⭐⭐" }, 5: { width: "Cinco peixinhos", emoji: "🐟🐟🐟🐟🐟" }, 6: { palavra: "Seis siris", emoji: "🦀🦀🦀🦀🦀🦀" }, 7: { palavra: "Sete conchas", emoji: "🦪🦪🦪🦪🦪🦪🦪" }, 8: { palavra: "Oito polvos", emoji: "🐙🐙🐙🐙🐙🐙🐙🐙" }, 9: { palavra: "Nove golfinhos", emoji: "🐬🐬🐬🐬🐬🐬🐬🐬🐬" }, 10: { palavra: "Dez águas-vivas", emoji: "🪼🪼🪼🪼🦪🪼🪼🪼🪼🪼" }
+                    1: { palavra: "Um navio", emoji: "🚢" }, 2: { palavra: "Duas baleias", emoji: "🐋🐋" }, 3: { palavra: "Três âncoras", emoji: "⚓⚓⚓" }, 4: { palavra: "Quatro estrelas", emoji: "⭐⭐⭐⭐" }, 5: { palavra: "Cinco peixinhos", emoji: "🐟🐟🐟🐟🐟" }, 6: { palavra: "Seis siris", emoji: "🦀🦀🦀🦀🦀🦀" }, 7: { palavra: "Sete conchas", emoji: "🦪🦪🦪🦪🦪🦪🦪" }, 8: { palavra: "Oito polvos", emoji: "🐙🐙🐙🐙🐙🐙🐙🐙" }, 9: { palavra: "Nove golfinhos", emoji: "🐬🐬🐬🐬🐬🐬🐬🐬🐬" }, 10: { palavra: "Dez águas-vivas", emoji: "🪼🪼🪼🪼🪼🪼🪼🪼🪼🪼" }
                 },
                 fases: [
                     { desenho: "🐋", pergunta: "Com qual letra começa a BALEIA, meu bem?", opcoes: ["M", "B", "P"], correta: "B", tipo: "letra" },
@@ -260,7 +340,13 @@
                     { desenho: "🦁", pergunta: "Com qual letra começa o LEÃO, meu anjo?", opcoes: ["O", "L", "M"], correta: "L", tipo: "letra" },
                     { desenho: "🦒", pergunta: "Com qual letra começa a GIRAFA?", opcoes: ["G", "J", "F"], correta: "G", tipo: "letra" },
                     { desenho: "🐒🐒🐒", pergunta: "Vamos contar? Quantos macacos tem aqui?", opcoes: ["2", "3", "4"], correta: "3", tipo: "numero" },
-                    { desenho: "🐸🐸🐸🐸", pergunta: "Quantos sapos fofos tem aqui?", opcoes: ["4", "6", "3"], correta: "4", tipo: "numero" }
+                    { desenho: "🐸🐸🐸🐸", pergunta: "Quantos sapos fofos tem aqui?", opcoes: ["4", "6", "3"], correta: "4", tipo: "numero" },
+                    { desenho: "🦊", pergunta: "Com qual letra começa a RAPOSA, meu amor?", opcoes: ["F", "R", "X"], correta: "R", tipo: "letra" },
+                    { desenho: "🐘", pergunta: "Com qual letra começa o ELEFANTE, meu bem?", opcoes: ["E", "A", "U"], correta: "E", tipo: "letra" },
+                    { desenho: "🦓", pergunta: "Com qual letra começa a ZEBRA?", opcoes: ["S", "Z", "P"], correta: "Z", tipo: "letra" },
+                    { desenho: "🐰🐰", pergunta: "Conta pra mamãe, quantos coelhinhos tem aqui?", opcoes: ["1", "3", "2"], correta: "2", tipo: "numero" },
+                    { desenho: "🐝🐝🐝🐝🐝", pergunta: "Olha só! Quantas abelhinhas tem voando?", opcoes: ["5", "4", "6"], correta: "5", tipo: "numero" },
+                    { desenho: "🦋🦋🦋🦋🦋🦋", pergunta: "Que lindo! Quantas borboletas coloridas?", opcoes: ["7", "6", "5"], correta: "6", tipo: "numero" }
                 ]
             },
             espaco: {
@@ -274,7 +360,14 @@
                 fases: [
                     { desenho: "🚀", pergunta: "Com qual letra começa o FOGUETE, meu amor?", opcoes: ["F", "V", "E"], correta: "F", tipo: "letra" },
                     { desenho: "🌙🌙", pergunta: "Quantas luas lindas tem aqui?", opcoes: ["1", "2", "3"], correta: "2", tipo: "numero" },
-                    { desenho: "🤖🤖🤖🤖", pergunta: "Quantos robôs espaciais tem aqui?", opcoes: ["4", "5", "2"], correta: "4", tipo: "numero" }
+                    { desenho: "🤖🤖🤖🤖", pergunta: "Quantos robôs espaciais tem aqui?", opcoes: ["4", "5", "2"], correta: "4", tipo: "numero" },
+                    { desenho: "👨‍🚀", pergunta: "Com qual letra começa o ASTRONAUTA, meu coração?", opcoes: ["I", "A", "O"], correta: "A", tipo: "letra" },
+                    { desenho: "🪐", pergunta: "Com qual letra começa o PLANETA, meu anjo?", opcoes: ["P", "T", "B"], correta: "P", tipo: "letra" },
+                    { desenho: "🛸", pergunta: "Com qual letra começa o DISCO VOADOR?", opcoes: ["D", "M", "U"], correta: "D", tipo: "letra" },
+                    { desenho: "👽", pergunta: "Com qual letra começa o ALIEN, meu bem?", opcoes: ["E", "A", "L"], correta: "A", tipo: "letra" },
+                    { desenho: "⭐💫✨", pergunta: "Vamos contar as estrelinhas com a mamãe?", opcoes: ["2", "4", "3"], correta: "3", tipo: "numero" },
+                    { desenho: "☀️☀️☀️☀️☀️", pergunta: "Olha que quente! Quantos sóis brilhantes tem aqui?", opcoes: ["5", "6", "4"], correta: "5", tipo: "numero" },
+                    { desenho: "🚀🚀🚀🚀🚀🚀", pergunta: "Uau! Quantos foguetes vão viajar pro espaço?", opcoes: ["5", "7", "6"], correta: "6", tipo: "numero" }
                 ]
             }
         };
@@ -294,12 +387,8 @@
                 window.speechSynthesis.cancel();
                 const pronuncia = new SpeechSynthesisUtterance(texto);
                 pronuncia.lang = 'pt-BR';
-                
-                if (vozEscolhida) {
-                    pronuncia.voice = vozEscolhida;
-                }
-                
-                pronuncia.rate = 1.0;  // Ritmo calmo e perfeito para todos os navegadores
+                if (vozEscolhida) pronuncia.voice = vozEscolhida;
+                pronuncia.rate = 1.0; 
                 pronuncia.pitch = 1.0; 
                 window.speechSynthesis.speak(pronuncia);
             }
@@ -310,35 +399,45 @@
                 const AudioCtx = window.AudioContext || window.webkitAudioContext;
                 if (!AudioCtx) return;
                 const ctx = new AudioCtx();
-                
                 const carregarRisada = (tempo, frequenciaBase, duracao) => {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
-                    
                     osc.type = 'triangle';
                     osc.frequency.setValueAtTime(frequenciaBase, tempo);
                     osc.frequency.setValueAtTime(frequenciaBase + 80, tempo + duracao * 0.3);
                     osc.frequency.setValueAtTime(frequenciaBase - 40, tempo + duracao * 0.6);
-                    
                     gain.gain.setValueAtTime(0, tempo);
                     gain.gain.linearRampToValueAtTime(0.2, tempo + 0.05);
                     gain.gain.exponentialRampToValueAtTime(0.001, tempo + duracao);
-                    
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    
-                    osc.start(tempo);
-                    osc.stop(tempo + duracao);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(tempo); osc.stop(tempo + duracao);
                 };
-
                 let tempoInicial = ctx.currentTime;
                 carregarRisada(tempoInicial, 650, 0.22);
                 carregarRisada(tempoInicial + 0.25, 720, 0.18);
                 carregarRisada(tempoInicial + 0.45, 680, 0.20);
                 carregarRisada(tempoInicial + 0.65, 800, 0.35);
-            } catch(e) {
-                console.log("Audio API não suportada");
-            }
+            } catch(e) {}
+        }
+
+        function tocarSomMagiaSintetico() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                let agora = ctx.currentTime;
+                const notas = [523.25, 659.25, 783.99, 1046.50]; // Acorde lindo de C
+                notas.forEach((frequencia, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(frequencia, agora + i * 0.06);
+                    gain.gain.setValueAtTime(0.15, agora + i * 0.06);
+                    gain.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.06 + 0.4);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(agora + i * 0.06); osc.stop(agora + i * 0.06 + 0.4);
+                });
+            } catch(e) {}
         }
 
         function irParaTela(idTela) {
@@ -372,12 +471,9 @@
             modoAtual = modo;
             const container = document.getElementById('container-grid');
             container.innerHTML = '';
-            
             document.getElementById('titulo-explorar').innerText = modo === 'letras' ? "Explorar Letrinhas! 🅰️" : "Contar Números! 🔢";
-
             const bancoDados = dadosTemas[temaSelecionado][modo];
             const chaves = Object.keys(bancoDados);
-            
             chaves.forEach(chave => {
                 const bolha = document.createElement('button');
                 bolha.className = 'bolha-item';
@@ -393,7 +489,6 @@
             const item = dadosTemas[temaSelecionado][modoAtual][chave];
             if(!item) return;
             document.getElementById('modal-emoji').innerText = item.emoji;
-            
             if (modoAtual === 'letras') {
                 document.getElementById('modal-texto').innerText = `${chave} de ${item.palavra.toUpperCase()}`;
                 falarTextoMaterno(`Letra ${chave}! ${chave} de ${item.palavra}!`);
@@ -433,7 +528,6 @@
             if (escolha === dadosFase.correta) {
                 let elogios = ["Isso meu amor! Você acertou!", "Muito bem, que orgulho!", "Parabéns, meu coração, tá certinho!"];
                 let elogioAleatorio = elogios[Math.floor(Math.random() * elogios.length)];
-                
                 feedback.innerText = "Muito bem! 🎉";
                 feedback.style.color = "var(--cor-sucesso)";
                 falarTextoMaterno(elogioAleatorio);
@@ -448,9 +542,8 @@
                     }
                 }, 2000);
             } else {
-                let incentivos = ["Tente de novo, meu coração!", "Quase! Vamos tentar mais uma vez?", "Olha direitinho e tenta de novo com a mamãe!"];
-                let incentivoAleatorio = incentivos[Math.floor(Math.random() * incentivos.length)];
-                
+                let incentives = ["Tente de novo, meu coração!", "Quase! Vamos tentar mais uma vez?", "Olha direitinho e tenta de novo com a mamãe!"];
+                let incentivoAleatorio = incentives[Math.floor(Math.random() * incentives.length)];
                 feedback.innerText = "Tente outra vez! ✨";
                 feedback.style.color = "var(--cor-erro)";
                 falarTextoMaterno(incentivoAleatorio);
@@ -460,17 +553,14 @@
         function abrirNumerosMagicos() {
             irParaTela('tela-numeros-magicos');
             falarTextoMaterno("Olha as bolhas! Vamos estourar e contar os números mágicos?");
-            
             const cenario = document.getElementById('cenario-bolhas');
             cenario.innerHTML = ''; 
-            
             const coresNumeros = ["#ff4757", "#2ed573", "#1e90ff", "#ffa502", "#9b59b6", "#ff6b81", "#ff4757", "#2ed573", "#1e90ff", "#ffa502"];
             
             for (let i = 1; i <= 10; i++) {
                 const bolha = document.createElement('div');
                 bolha.className = 'bolha-flutuante';
                 bolha.innerText = i;
-                
                 const tamanho = 75; 
                 bolha.style.width = `${tamanho}px`;
                 bolha.style.height = `${tamanho}px`;
@@ -479,7 +569,6 @@
                 
                 const posX = Math.random() * (window.innerWidth - tamanho - 20);
                 const posY = Math.random() * (window.innerHeight - 320);
-                
                 bolha.style.left = `${posX}px`;
                 bolha.style.top = `${posY}px`;
                 bolha.style.animationDelay = `${Math.random() * 2}s`;
@@ -504,10 +593,7 @@
                     bolha.style.transform = 'scale(1.4)';
                     bolha.style.opacity = '0';
                     bolha.style.pointerEvents = 'none'; 
-                    
-                    setTimeout(() => {
-                        falarTextoMaterno(`${i}`);
-                    }, 50);
+                    setTimeout(() => { falarTextoMaterno(`${i}`); }, 50);
                     
                     setTimeout(() => {
                         bolha.remove();
@@ -517,11 +603,133 @@
                         }
                     }, 300);
                 };
-                
                 cenario.appendChild(bolha);
             }
         }
-        
+
+        /* LÓGICA DO NOVO JOGO: AVENTURAS ENCANTADAS */
+        function abrirMenuAventuras() {
+            falarTextoMaterno("Que lindo! Vamos viver uma aventura de sereias ou princesas?");
+            irParaTela('tela-menu-aventuras');
+        }
+
+        function iniciarJogoAventura(tipo) {
+            aventuraAtual = tipo;
+            const dados = dadosAventuras[tipo];
+            
+            // Define o fundo do cenário baseado no tema escolhido
+            const telaAventura = document.getElementById('tela-jogo-aventura');
+            telaAventura.style.background = dados.fundo;
+            document.getElementById('aventura-titulo').innerText = dados.nome;
+
+            // Embaralha a ordem dos itens que a criança vai precisar buscar
+            itensAventuraFase = [...dados.itens].sort(() => Math.random() - 0.5);
+            itemObjetivoIndex = 0;
+
+            irParaTela('tela-jogo-aventura');
+            falarTextoMaterno(dados.introducao);
+
+            setTimeout(() => {
+                montarCenarioAventura();
+            }, 2500);
+        }
+
+        function montarCenarioAventura() {
+            const cenario = document.getElementById('cenario-aventura');
+            cenario.innerHTML = ''; // Limpa tela
+
+            const dados = dadosAventuras[aventuraAtual];
+            const itemAlvo = itensAventuraFase[itemObjetivoIndex];
+
+            // Atualiza o painel do topo com o item atual
+            document.getElementById('aventura-item-procurado-emoji').innerText = itemAlvo.emoji;
+
+            // Criar uma lista contendo TODOS os itens da fase + itens extras decorativos
+            let todosOsElementos = [];
+            
+            // 1. Adiciona o item correto
+            todosOsElementos.push({ emoji: itemAlvo.emoji, correto: true, info: itemAlvo });
+
+            // 2. Adiciona os outros itens que não são o alvo agora
+            itensAventuraFase.forEach(it => {
+                if(it.emoji !== itemAlvo.emoji) {
+                    todosOsElementos.push({ emoji: it.emoji, correto: false, info: it });
+                }
+            });
+
+            // 3. Adiciona vários itens puramente decorativos para espalhar pela tela
+            dados.decoratives.forEach(emojiDec => {
+                todosOsElementos.push({ emoji: emojiDec, correto: false, decorativo: true });
+                todosOsElementos.push({ emoji: emojiDec, correto: false, decorativo: true }); // Duplicado para encher o mapa
+            });
+
+            // Embaralha tudo para espalhar de forma randômica nas posições
+            todosOsElementos.sort(() => Math.random() - 0.5);
+
+            // Renderiza na tela controlando para não saírem das bordas
+            todosOsElementos.forEach(elem => {
+                const divItem = document.createElement('div');
+                divItem.className = 'item-escondido';
+                divItem.innerText = elem.emoji;
+
+                // Margens seguras para celulares pequenos
+                const x = 30 + Math.random() * (window.innerWidth - 90);
+                const y = 170 + Math.random() * (window.innerHeight - 260);
+
+                divItem.style.left = `${x}px`;
+                divItem.style.top = `${y}px`;
+                divItem.style.animationDelay = `${Math.random() * 3}s`;
+
+                // Evento do toque
+                divItem.onclick = (e) => {
+                    e.stopPropagation();
+                    if (elem.correto) {
+                        tocarSomMagiaSintetico();
+                        divItem.style.transform = 'scale(2.0) rotate(20deg)';
+                        divItem.style.opacity = '0';
+                        divItem.style.pointerEvents = 'none';
+
+                        falarTextoMaterno(elem.info.falaSucesso);
+
+                        setTimeout(() => {
+                            proximaEtapaAventura();
+                        }, 2500);
+                    } else {
+                        // Se clicou em um decorativo ou item errado, apenas balança indicando erro sutil
+                        divItem.style.transform = 'scale(0.8)';
+                        setTimeout(() => { divItem.style.transform = 'scale(1)'; }, 150);
+                        
+                        if(!elem.decorativo) {
+                            falarTextoMaterno(`Esse é outro objeto fofo! Procura pra mamãe onde está ${itemAlvo.nome}`);
+                        }
+                    }
+                };
+
+                cenario.appendChild(divItem);
+            });
+
+            // Dá a instrução de voz do item que deve ser achado
+            falarTextoMaterno(`Onde está ${itemAlvo.nome}?`);
+        }
+
+        function proximaEtapaAventura() {
+            itemObjetivoIndex++;
+            if (itemObjetivoIndex < itensAventuraFase.length) {
+                montarCenarioAventura();
+            } else {
+                // Ganhou a aventura inteira
+                tocarRisadaDeBebeReal();
+                falarTextoMaterno("Parabéns, minha princesa linda! Você encontrou todos os tesouros mágicos! Você é demais!");
+                
+                const cenario = document.getElementById('cenario-aventura');
+                cenario.innerHTML = '<h1 style="color:white; text-shadow:0 0 10px rgba(0,0,0,0.4); font-size:45px; margin-top:40vh; width:100%; text-align:center; animation: pulso 1s infinite;">🎉🏆👑</h1>';
+                
+                setTimeout(() => {
+                    irParaTela('tela-menu-aventuras');
+                }, 4000);
+            }
+        }
+
         mudarCorInicial('colorido');
     </script>
 
