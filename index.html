@@ -91,8 +91,22 @@
             transition: transform 0.1s ease-out, opacity 0.2s;
         }
         @keyframes balancoSuave {
-            0% { transform: translateY(0) translateX(0); }
-            100% { transform: translateY(-15px) translateX(10px); }
+           /* Animação das Bolhas Mágicas - Agora com movimento mais vivo! */
+        .bolha-flutuante {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            border: 3px solid rgba(255, 255, 255, 0.7);
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.6), 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            cursor: pointer;
+            animation: flutuarLivre 6s ease-in-out infinite;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* Estilos dos Itens Escondidos */
@@ -103,9 +117,12 @@
             transition: transform 0.2s, opacity 0.3s;
             animation: flutuarSuave 3s ease-in-out infinite alternate;
         }
-        @keyframes flutuarSuave {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-8px) rotate(5deg); }
+        @keyframes flutuarLivre {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(15px, -25px); }
+            50% { transform: translate(-10px, -45px); }
+            75% { transform: translate(20px, -20px); }
+            100% { transform: translate(0, 0); }
         }
     </style>
 </head>
@@ -658,7 +675,7 @@
             });
 
             // 3. Adiciona vários itens puramente decorativos para espalhar pela tela
-            dados.decoratives.forEach(emojiDec => {
+            dados.decorativos.forEach(emojiDec => {
                 todosOsElementos.push({ emoji: emojiDec, correto: false, decorativo: true });
                 todosOsElementos.push({ emoji: emojiDec, correto: false, decorativo: true }); // Duplicado para encher o mapa
             });
