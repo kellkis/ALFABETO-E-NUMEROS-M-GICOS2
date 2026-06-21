@@ -664,86 +664,58 @@ telaAventura.style.background = fundoEscolhido;
         }
 
         function montarCenarioAventura() {
-    const cenario = document.getElementById('cenario-aventura');
-    cenario.innerHTML = ''; // Limpa o cenário anterior
-    
-    const dados = dadosAventuras[aventuraAtual];
-    const itemAlvo = itensAventuraFase[itemObjetivoIndex];
-    
-    // Atualiza o painel de busca
-    document.getElementById('aventura-item-procurado-emoji').innerText = itemAlvo.emoji;
+            const cenario = document.getElementById('cenario-aventura');
+            cenario.innerHTML = ''; // Limpa o cenário anterior
+            
+            const dados = dadosAventuras[aventuraAtual];
+            const itemAlvo = itensAventuraFase[itemObjetivoIndex];
+            
+            // Atualiza o painel de busca
+            document.getElementById('aventura-item-procurado-emoji').innerText = itemAlvo.emoji;
 
-    // 1. Adiciona o item correto (o que precisa ser achado)
-    const divCorreto = document.createElement('div');
-    divCorreto.className = 'item-escondido';
-    divCorreto.innerText = itemAlvo.emoji;
-    divCorreto.onclick = () => {
-        falarTextoMaterno(itemAlvo.falaSucesso);
-        divCorreto.style.transform = 'scale(1.5)';
-        setTimeout(() => proximoItemAventura(), 1000);
-    };
-    
-    // Posição aleatória para o item correto
-    posicionarElementoAleatorio(divCorreto);
-    cenario.appendChild(divCorreto);
+            // Prepara a lista de elementos (item correto + decorativos)
+            let elementos = [
+                { emoji: itemAlvo.emoji, correto: true, info: itemAlvo }
+            ];
+            
+            // Adiciona alguns decorativos aleatórios
+            dados.decorativos.sort(() => Math.random() - 0.5).slice(0, 5).forEach(dec => {
+                elementos.push({ emoji: dec, correto: false, decorativo: true });
+            });
 
-    // 2. Adiciona os decorativos espalhados
-    dados.decorativos.forEach(emojiDec => {
-        const divDec = document.createElement('div');
-        divDec.className = 'item-escondido';
-        divDec.innerText = emojiDec;
-        posicionarElementoAleatorio(divDec);
-        cenario.appendChild(divDec);
-    });
-}
+            // Embaralha elementos na tela
+            elementos.sort(() => Math.random() - 0.5);
 
-// Função auxiliar para espalhar os itens na tela
-function posicionarElementoAleatorio(el) {
-    const margem = 50; // Margem para não colar na borda
-    const largura = window.innerWidth - margem * 2;
-    const altura = window.innerHeight - 250; // Evita o topo e o título
-    
-    el.style.left = (margem + Math.random() * largura) + 'px';
-    el.style.top = (150 + Math.random() * altura) + 'px';
-}
-
-                // Margens seguras para celulares pequenos
+            elementos.forEach(elem => {
+                const divItem = document.createElement('div');
+                divItem.className = 'item-escondido';
+                divItem.innerText = elem.emoji;
+                
+                // Posição aleatória
                 const x = 30 + Math.random() * (window.innerWidth - 90);
                 const y = 170 + Math.random() * (window.innerHeight - 260);
-
                 divItem.style.left = `${x}px`;
                 divItem.style.top = `${y}px`;
-                divItem.style.animationDelay = `${Math.random() * 3}s`;
 
-                // Evento do toque
                 divItem.onclick = (e) => {
                     e.stopPropagation();
                     if (elem.correto) {
                         tocarSomMagiaSintetico();
                         divItem.style.transform = 'scale(2.0) rotate(20deg)';
                         divItem.style.opacity = '0';
-                        divItem.style.pointerEvents = 'none';
-
                         falarTextoMaterno(elem.info.falaSucesso);
-
-                        setTimeout(() => {
-                            proximaEtapaAventura();
-                        }, 2500);
+                        setTimeout(() => proximaEtapaAventura(), 2000);
                     } else {
-                        // Se clicou em um decorativo ou item errado, apenas balança indicando erro sutil
                         divItem.style.transform = 'scale(0.8)';
-                        setTimeout(() => { divItem.style.transform = 'scale(1)'; }, 150);
-                        
+                        setTimeout(() => divItem.style.transform = 'scale(1)', 150);
                         if(!elem.decorativo) {
-                            falarTextoMaterno(`Esse é outro objeto fofo! Procura pra mamãe onde está ${itemAlvo.nome}`);
+                            falarTextoMaterno(`Esse é outro objeto! Onde está ${itemAlvo.nome}?`);
                         }
                     }
                 };
-
                 cenario.appendChild(divItem);
             });
 
-            // Dá a instrução de voz do item que deve ser achado
             falarTextoMaterno(`Onde está ${itemAlvo.nome}?`);
         }
 
