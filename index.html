@@ -462,8 +462,9 @@
             setTimeout(() => { 
                 tocareBoasVindas();
                 irParaTela('tela-temas');
-    falarTextoMaterno("Bem-vindo! Vamos começar a nossa brincadeira?");
-}
+                falarTextoMaterno("Bem-vindo! Vamos começar a nossa brincadeira?");
+            }, 500);
+        }
 
         function escolherTema(tema) {
             temaSelecionado = tema;
@@ -644,7 +645,7 @@ telaAventura.style.background = fundoEscolhido;
             document.getElementById('aventura-titulo').innerText = dados.nome;
 
             // Embaralha a ordem dos itens que a criança vai precisar buscar
-            itensAventuraFase = [.dados.itens].sort(() => Math.random() - 0.6);
+            itensAventuraFase = [...dados.itens].sort(() => Math.random() - 0.5);
             itemObjetivoIndex = 0;
 
             irParaTela('tela-jogo-aventura');
