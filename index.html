@@ -133,7 +133,7 @@
 
         <button id="btn-entrar-acao" class="btn-entrar" onclick="iniciarAplicativo()">Entrar 🌟</button>
     </div>
-
+<p style="text-align: center; opacity: 0.8; font-size: 18px;">By Kelki</p>
     <div id="tela-temas" class="tela">
         <div class="controles-topo">
             <button class="btn-navegacao btn-inicio" onclick="irParaTela('tela-abertura')">🏠 Início</button>
@@ -352,9 +352,9 @@
                     { desenho: "🦊", pergunta: "Com qual letra começa a RAPOSA, meu amor?", opcoes: ["F", "R", "X"], correta: "R", tipo: "letra" },
                     { desenho: "🐘", pergunta: "Com qual letra começa o ELEFANTE, meu bem?", opcoes: ["E", "A", "U"], correta: "E", tipo: "letra" },
                     { desenho: "🦓", pergunta: "Com qual letra começa a ZEBRA?", opcoes: ["S", "Z", "P"], correta: "Z", tipo: "letra" },
-                    { desenho: "🐰🐰", pergunta: "Conta pra mamãe, quantos coelhinhos tem aqui?", opcoes: ["1", "3", "2"], correta: "2", tipo: "numero" },
-                    { desenho: "🐝🐝🐝🐝🐝", pergunta: "Olha só! Quantas abelhinhas tem voando?", opcoes: ["5", "4", "6"], correta: "5", tipo: "numero" },
-                    { desenho: "🦋🦋🦋🦋🦋🦋", pergunta: "Que lindo! Quantas borboletas coloridas?", opcoes: ["7", "6", "5"], correta: "6", tipo: "numero" }
+                    { desenho: "🐰🐰", pergunta: "Conta pra mamãe, quantos coelhinhos tem aqui?", opcoes: ["1", "4", "2"], correta: "2", tipo: "numero" },
+                    { desenho: "🐝🐝🐝🐝🐝", pergunta: "Olha só! Quantas abelhinhas tem voando?", opcoes: ["5", "8", "6"], correta: "5", tipo: "numero" },
+                    { desenho: "🦋🦋🦋🦋🦋🦋", pergunta: "Que lindo! Quantas borboletas coloridas?", opcoes: ["7", "9", "5"], correta: "6", tipo: "numero" }
                 ]
             },
             espaco: {
@@ -713,7 +713,7 @@
                 falarTextoMaterno("Parabéns, minha princesa linda! Você encontrou todos os tesouros mágicos! Você é demais!");
                 
                 const cenario = document.getElementById('cenario-aventura');
-                cenario.innerHTML = '<h1 style="color:white; text-shadow:0 0 10px rgba(0,0,0,0.4); font-size:45px; margin-top:40vh; width:100%; text-align:center; animation: pulso 1s infinite;">🎉🏆👑</h1>';
+                cenario.innerHTML = '<h1 style="color:white; text-shadow:0 0 20px rgba(0,0,0,0.4); font-size:45px; margin-top:40vh; width:100%; text-align:center; animation: pulso 1s infinite;">🎉🏆👑</h1>';
                 
                 setTimeout(() => {
                     irParaTela('tela-menu-aventuras');
