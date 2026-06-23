@@ -275,7 +275,7 @@
             sereias: {
                 nome: "Reino das Sereias 🧜‍♀️",
                 fundo: "linear-gradient(to bottom, #81ecec, #00cec9)",
-                introducao: "Uau, mergulhamos no reino das sereias! Ajuda a mamãe a achar os tesouros do mar?",
+                introducao: "Uau, mergulhamos no reino das sereias! Ajuda a achar os tesouros do mar?",
                 itens: [
                     { emoji: "🧜‍♀️", nome: "a linda sereia do mar, meu anjo", falaSucesso: "Olha ela aí! Você encontrou a sereia linda!" },
                     { emoji: "🦪", nome: "a concha com a pérola brilhante", falaSucesso: "Muito bem! Uma pérola brilhante e preciosa!" },
@@ -552,7 +552,7 @@
                     }
                 }, 2000);
             } else {
-                let incentives = ["Tente de novo, meu coração!", "Quase! Vamos tentar mais uma vez?", "Olha direitinho e tenta de novo com a mamãe!"];
+                let incentives = ["Tente de novo!", "Quase! Vamos tentar mais uma vez?", "Olha direitinho e tenta de novo com a mamãe!"];
                 let incentivoAleatorio = incentives[Math.floor(Math.random() * incentives.length)];
                 feedback.innerText = "Tente outra vez! ✨";
                 feedback.style.color = "var(--cor-erro)";
@@ -567,7 +567,7 @@
             cenario.innerHTML = ''; 
             const coresNumeros = ["#ff4757", "#2ed573", "#1e90ff", "#ffa502", "#9b59b6", "#ff6b81", "#ff4757", "#2ed573", "#1e90ff", "#ffa502"];
             
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= 20; i++) {
                 const bolha = document.createElement('div');
                 bolha.className = 'bolha-flutuante';
                 bolha.innerText = i;
@@ -629,7 +629,7 @@
             const dados = dadosAventuras[tipo];
 
             // APLIQUE A IMAGEM AQUI (substitua o link abaixo pela sua imagem)
-            telaAventura.style.background = "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2vXLN7ssY7qzE0ZRKMwiqvM3Ncmw8WCizBKbqpGMHIJEs3FPQLJzdsM1u&s=10')";
+            telaAventura.style.background = "url('https://cdn.magicdecor.in/com/2024/05/24154008/Dreamy-Pink-and-Pastel-Color-Cartoon-Castle-Wallpaper-Mural-for-Kids.jpg')";
             telaAventura.style.backgroundSize = "cover";
             telaAventura.style.backgroundPosition = "center";
             telaAventura.style.backgroundRepeat = "no-repeat";
