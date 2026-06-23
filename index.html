@@ -100,13 +100,13 @@
 }
 
         /* Estilos dos Itens Escondidos */
-/* Isso força os itens a ficarem SEMPRE no topo, acima do fundo */
-.item-escondido {
-    position: absolute;
+        .item-escondido {
+    position: absolute; /* O segredo para não ficarem em fila */
     font-size: 55px;
     cursor: pointer;
-    z-index: 9999 !important; /* O "!important" garante que nada passe por cima */
-} Garante que fiquem acima do fundo */
+    transition: transform 0.2s, opacity 0.3s;
+    animation: flutuarLivre 6s ease-in-out infinite;
+    z-index: 2; /* Garante que fiquem acima do fundo */
 }
         @keyframes flutuarLivre {
             0% {transform: translate(0, 0);}
@@ -133,7 +133,7 @@
 
         <button id="btn-entrar-acao" class="btn-entrar" onclick="iniciarAplicativo()">Entrar 🌟</button>
     </div>
-<p style="text-align: center; opacity: 0.8; font-size: 18px;">By Kelki</p>
+
     <div id="tela-temas" class="tela">
         <div class="controles-topo">
             <button class="btn-navegacao btn-inicio" onclick="irParaTela('tela-abertura')">🏠 Início</button>
@@ -230,12 +230,12 @@
         </div>
         <div style="padding: 20px; padding-top: 65px; z-index: 4; width: 100%;">
             <h1 id="aventura-titulo" style="color: white; text-shadow: 2px 2px 8px rgba(0,0,0,0.3); margin: 0; font-size: 28px;">Castelo Mágico</h1>
-            <<div id="painel-procurar" style="background: rgba(255,255,255,0.9); pointer-events: none; color: #333; padding: 10px 20px; border-radius: 25px; margin-top: 10px; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+            <div id="painel-procurar" style="background: rgba(255,255,255,0.9); color: #333; padding: 10px 20px; border-radius: 25px; margin-top: 10px; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); font-weight: 900; font-size: 18px;">
                 <span>Encontre o item:</span> <span id="aventura-item-procurado-emoji" style="font-size: 32px;">👑</span>
             </div>
         </div>
         <!-- Cenário interativo onde os itens mudam de lugar -->
-        <div id="cenario-aventura" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50;"></div>
+        <div id="cenario-aventura"></div> style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
     </div>
 
     <script>
@@ -259,7 +259,7 @@
         const dadosAventuras = {
             castelo: {
                 nome: "Castelo das Princesas 🏰",
-                fundo: "linear-gradient(to bottom, #ecd2e4, #b19ffb)";
+                fundo: "linear-gradient(to bottom, #ecd2e4, #b19ffb)",
                 introducao: "Bem-vinda ao castelo, minha princesa! Vamos encontrar os objetos mágicos com a mamãe?",
                 itens: [
                     { emoji: "👑", nome: "a coroa da princesa, meu bem", falaSucesso: "Isso aí! Achou a coroa linda da princesa!" },
@@ -352,9 +352,9 @@
                     { desenho: "🦊", pergunta: "Com qual letra começa a RAPOSA, meu amor?", opcoes: ["F", "R", "X"], correta: "R", tipo: "letra" },
                     { desenho: "🐘", pergunta: "Com qual letra começa o ELEFANTE, meu bem?", opcoes: ["E", "A", "U"], correta: "E", tipo: "letra" },
                     { desenho: "🦓", pergunta: "Com qual letra começa a ZEBRA?", opcoes: ["S", "Z", "P"], correta: "Z", tipo: "letra" },
-                    { desenho: "🐰🐰", pergunta: "Conta pra mamãe, quantos coelhinhos tem aqui?", opcoes: ["1", "4", "2"], correta: "2", tipo: "numero" },
-                    { desenho: "🐝🐝🐝🐝🐝", pergunta: "Olha só! Quantas abelhinhas tem voando?", opcoes: ["5", "8", "6"], correta: "5", tipo: "numero" },
-                    { desenho: "🦋🦋🦋🦋🦋🦋", pergunta: "Que lindo! Quantas borboletas coloridas?", opcoes: ["7", "9", "5"], correta: "6", tipo: "numero" }
+                    { desenho: "🐰🐰", pergunta: "Conta pra mamãe, quantos coelhinhos tem aqui?", opcoes: ["1", "3", "2"], correta: "2", tipo: "numero" },
+                    { desenho: "🐝🐝🐝🐝🐝", pergunta: "Olha só! Quantas abelhinhas tem voando?", opcoes: ["5", "4", "6"], correta: "5", tipo: "numero" },
+                    { desenho: "🦋🦋🦋🦋🦋🦋", pergunta: "Que lindo! Quantas borboletas coloridas?", opcoes: ["7", "6", "5"], correta: "6", tipo: "numero" }
                 ]
             },
             espaco: {
@@ -546,12 +546,12 @@
                     if (faseJogoAtual < fasesTema.length) { carregarFaseJogo(); } 
                     else {
                         feedback.innerText = "Parabéns! Você venceu! 🏆";
-                        falarTextoMaterno("Parabéns, vencedor! Você completou o jogo inteiro!");
+                        falarTextoMaterno("Parabéns, meu amor! Você completou o jogo inteiro!");
                         setTimeout(() => irParaTela('tela-modos'), 2500);
                     }
                 }, 2000);
             } else {
-                let incentives = ["Tente de novo!", "Quase! Vamos tentar mais uma vez?", "Olha direitinho e tenta de novo com a mamãe!"];
+                let incentives = ["Tente de novo, meu coração!", "Quase! Vamos tentar mais uma vez?", "Olha direitinho e tenta de novo com a mamãe!"];
                 let incentivoAleatorio = incentives[Math.floor(Math.random() * incentives.length)];
                 feedback.innerText = "Tente outra vez! ✨";
                 feedback.style.color = "var(--cor-erro)";
@@ -618,34 +618,43 @@
 
         /* LÓGICA DO NOVO JOGO: AVENTURAS ENCANTADAS */
        function abrirMenuAventuras() {
-            falarTextoMaterno("Que lindo!Vamos viver uma aventura de sereias ou princesas?");
+            falarTextoMaterno("Que lindo! Vamos viver uma aventura de sereias ou princesas?");
             irParaTela('tela-menu-aventuras');
         }
 
         function iniciarJogoAventura(tipo) {
-    aventuraAtual = tipo;
-    const telaAventura = document.getElementById('tela-jogo-aventura');
-    const dados = dadosAventuras[tipo];
+            aventuraAtual = tipo;
+            const telaAventura = document.getElementById('tela-jogo-aventura');
+            const dados = dadosAventuras[tipo];
 
-    // Aplica a imagem de fundo corretamente
-    telaAventura.style.background = "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRssgL825sFIiRtlq8Rm4p8EZkXfjYKUHjBB2smwYKp0qrqYk3rKg5xBX4&s=10')";
-    telaAventura.style.backgroundSize = "cover";
-    telaAventura.style.backgroundPosition = "center";
-    telaAventura.style.backgroundRepeat = "no-repeat";
+// Lista de fundos super alegres e mágicos
+const fundosAleatorios = [
+    "linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%)",
+    "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)",
+    "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)",
+    "linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%)",
+    "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+    "linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)"
+];
 
-    document.getElementById('aventura-titulo').innerText = dados.nome;
+// Escolhe um fundo aleatório da lista
+const fundoEscolhido = fundosAleatorios[Math.floor(Math.random() * fundosAleatorios.length)];
+telaAventura.style.background = fundoEscolhido;
+            // Define o fundo do cenário baseado no tema escolhido
+            telaAventura.style.background = dados.fundo;
+            document.getElementById('aventura-titulo').innerText = dados.nome;
 
-    // Corrige a sintaxe dos itens
-    itensAventuraFase = [...dados.itens].sort(() => Math.random() - 0.5);
-    itemObjetivoIndex = 0;
+            // Embaralha a ordem dos itens que a criança vai precisar buscar
+            itensAventuraFase = [...dados.itens].sort(() => Math.random() - 0.6);
+            itemObjetivoIndex = 0;
 
-    irParaTela('tela-jogo-aventura');
-    falarTextoMaterno(dados.introducao);
+            irParaTela('tela-jogo-aventura');
+            falarTextoMaterno(dados.introducao);
 
-    setTimeout(() => {
-        montarCenarioAventura();
-    }, 2500);
-}
+            setTimeout(() => {
+                montarCenarioAventura();
+            }, 2500);
+        }
 
         function montarCenarioAventura() {
             const cenario = document.getElementById('cenario-aventura');
@@ -703,7 +712,16 @@
             falarTextoMaterno(`Onde está ${itemAlvo.nome}?`);
         }
 
-         function proximaEtapaAventura() {
+        function proximaEtapaAventura() {
+            itemObjetivoIndex++;
+            if (itemObjetivoIndex < itensAventuraFase.length) {
+                montarCenarioAventura();
+            } else {
+                falarTextoMaterno("Parabéns, você encontrou todos os tesouros!");
+                irParaTela('tela-menu-aventuras');
+            }
+        }
+        function proximaEtapaAventura() {
             itemObjetivoIndex++;
             if (itemObjetivoIndex < itensAventuraFase.length) {
                 montarCenarioAventura();
@@ -713,7 +731,7 @@
                 falarTextoMaterno("Parabéns, minha princesa linda! Você encontrou todos os tesouros mágicos! Você é demais!");
                 
                 const cenario = document.getElementById('cenario-aventura');
-                cenario.innerHTML = '<h1 style="color:white; text-shadow:0 0 20px rgba(0,0,0,0.4); font-size:45px; margin-top:40vh; width:100%; text-align:center; animation: pulso 1s infinite;">🎉🏆👑</h1>';
+                cenario.innerHTML = '<h1 style="color:white; text-shadow:0 0 10px rgba(0,0,0,0.4); font-size:45px; margin-top:40vh; width:100%; text-align:center; animation: pulso 1s infinite;">🎉🏆👑</h1>';
                 
                 setTimeout(() => {
                     irParaTela('tela-menu-aventuras');
